@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace DesignPatterns.Models
@@ -18,18 +19,20 @@ namespace DesignPatterns.Models
         public string Brand { get; set; }
         public string Model { get; set; }
         public double Gas { get; set; }
+        public int Year { get; set; }
         public double FuelLimit { get; set; }
 
         #endregion
 
         #region Constructors
 
-        public Vehicle(string color, string brand, string model, double fuelLimit = 10)
+        public Vehicle(string color, string brand, string model, int year, double fuelLimit = 10)
         {
             ID = Guid.NewGuid();
             Color = color;
             Brand = brand;
             Model = model;
+            Year = year;
             FuelLimit = fuelLimit;
         }
 
@@ -38,7 +41,7 @@ namespace DesignPatterns.Models
         #region Methods
         public void AddGas()
         {
-            if(Gas <= FuelLimit)
+            if (Gas <= FuelLimit)
             {
                 Gas += 0.1;
             }

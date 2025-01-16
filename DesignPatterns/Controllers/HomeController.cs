@@ -1,4 +1,6 @@
-﻿using DesignPatterns.Models;
+﻿using DesignPatterns.Factories;
+using DesignPatterns.ModelBuilders;
+using DesignPatterns.Models;
 using DesignPatterns.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -16,10 +18,68 @@ namespace DesignPatterns.Controllers
 
         private readonly IVehicleRepository _vehicleRepository;
 
-        public HomeController(IVehicleRepository vehicleRepository,ILogger<HomeController> logger)
+private CarFactory chooseFactory(string vehicle)
         {
+
+            switch (vehicle)
+
+            {
+
+                case "Mustang":
+
+                    return new FordMustangFactory();
+
+                case "Explorer":
+
+                    return new FordExplorerFactory();
+
+                case "Escape":
+
+                    return new FordEscapeFactory();
+
+                default:
+
+                    throw new NotImplementedException();
+
+            }
+
+        }
+
+        public HomeController(IVehicleRepository vehicleRepository, ILogger<HomeController> logger)        {
             _vehicleRepository = vehicleRepository;
             _logger = logger;
+        }
+
+         [HttpGet]
+
+        public IActionResult AddMustang()
+
+        {
+
+            CarFactory factory = chooseFactory("Mustang");
+
+
+
+            _vehicleRepository.AddVehicle(factory.Create());
+
+            return Redirect("/");
+
+        }
+
+        [HttpGet]
+
+        public IActionResult AddEscape()
+
+        {
+
+            CarFactory factory = chooseFactory("Escape");
+
+
+
+            _vehicleRepository.AddVehicle(factory.Create());
+
+            return Redirect("/");
+
         }
 
         public IActionResult Index()
@@ -32,17 +92,16 @@ namespace DesignPatterns.Controllers
             return View(model);
         }
 
-        [HttpGet]
-        public IActionResult AddMustang()
-        {
-            _vehicleRepository.AddVehicle(new Car("red","Ford","Mustang"));
-            return Redirect("/");
-        }
+          [HttpGet]
 
-        [HttpGet]
         public IActionResult AddExplorer()
         {
-            _vehicleRepository.AddVehicle(new Car("red", "Ford", "Explorer"));
+            var builder = new CarModelBuilder();
+            _vehicleRepository.AddVehicle(builder
+                .setModel("Explorer")
+                .setColor("Black")
+                .Build()
+                );
             return Redirect("/");
         }
 
